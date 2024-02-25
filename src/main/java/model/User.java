@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import modelDAO.DAOException;
+import modelDAO.UserDAO;
 
 import java.sql.Timestamp;
 
@@ -36,24 +38,24 @@ public class User{
     @Getter
     @Setter
     @Column(name = "is_admin", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean isAdmin;
+    private boolean isAdmin;
 
     @Getter
     @Setter
     @Column(name = "is_blocked", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean isBlocked;
+    private boolean isBlocked;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
 
     @Builder(toBuilder = true)
-    private User(String login, String email, String userPassword, String username, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
+    public User(String login, String email, String userPassword, String username, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
         this.login = login;
         this.email = email;
         this.userPassword = userPassword;
         this.username = username;
-        this.isAdmin = isAdmin;
-        this.isBlocked = isBlocked;
+        this.isAdmin = isAdmin != null ? isAdmin : false;
+        this.isBlocked = isBlocked != null ? isBlocked : false;
         this.createdAt = createdAt;
     }
 

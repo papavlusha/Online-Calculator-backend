@@ -31,14 +31,14 @@ public class UserDAO {
         }
     }
 
-    public static void deleteUser(User user) throws DAOException {
+    public static void deleteUser(Long id) throws DAOException {
         EntityManager em = null;
         EntityTransaction transaction = null;
         try {
             em = ConnectionPool.getConnection();
             transaction = em.getTransaction();
             transaction.begin();
-            User userToDelete = em.find(User.class, user.getUserId());
+            User userToDelete = em.find(User.class, id);
             if (userToDelete != null) {
                 em.remove(userToDelete);
             }
