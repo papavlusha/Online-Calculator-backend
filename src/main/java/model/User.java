@@ -47,7 +47,7 @@ public class User{
     private Timestamp createdAt;
 
     @Builder(toBuilder = true)
-    public User(String login, String email, String userPassword, String username, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
+    private User(String login, String email, String userPassword, String username, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
         this.login = login;
         this.email = email;
         this.userPassword = userPassword;
