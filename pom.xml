@@ -54,20 +54,16 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>exec-java</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>testPack.App</mainClass>
-              <cleanupDaemonThreads>false</cleanupDaemonThreads>
-            </configuration>
-          </execution>
-        </executions>
+        <version>1.6.0</version>
+        <configuration>
+          <executable>java</executable>
+          <arguments>
+            <argument>-classpath</argument>
+            <!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
+            <classpath/>
+            <argument>testPack.App</argument>
+          </arguments>
+        </configuration>
       </plugin>
     </plugins>
   </build>
