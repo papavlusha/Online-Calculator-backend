@@ -1,97 +1,85 @@
 package model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
 public class User{
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
+    @Getter
     @Column(name = "login", nullable = false, unique = true)
     private String login;
 
+    @Getter
+    @Setter
     @Column(name = "username")
     private String username;
 
+    @Getter
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Getter
     @Column(name = "user_password", nullable = false)
     private String userPassword;
 
+    @Getter
+    @Setter
     @Column(name = "is_admin", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isAdmin;
+    private Boolean isAdmin;
 
+    @Getter
+    @Setter
     @Column(name = "is_blocked", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isBlocked;
+    private Boolean isBlocked;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
 
-    public User(String login, String email, String userPassword) {
+    @Builder(toBuilder = true)
+    public User(String login, String email, String userPassword, String username, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
         this.login = login;
         this.email = email;
         this.userPassword = userPassword;
+        this.username = username;
+        this.isAdmin = isAdmin;
+        this.isBlocked = isBlocked;
+        this.createdAt = createdAt;
     }
 
     public User() {
 
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getLogin() {
-        return login;
+    public static class UserBuilder {
+        public User build() {
+            if (login == null || email == null || userPassword == null) {
+                throw new IllegalArgumentException("Login, email and userPassword must be provided");
+            }
+            return new User(login, email, userPassword, username, isAdmin, isBlocked, createdAt);
+        }
     }
 
     public void setLogin(String login) {
         this.login = login;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getUserPassword() {
-        return userPassword;
-    }
-
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
-    }
-
-    public boolean isBlocked() {
-        return isBlocked;
-    }
-
-    public void setBlocked(boolean blocked) {
-        isBlocked = blocked;
     }
 
     public Timestamp getCreatedAt() {
@@ -109,6 +97,6 @@ public class User{
 
     @Override
     public String toString() {
-        return "User [id=" + userId + "login=" + login + ", username=" + username + "]";
+        return "User [id=" + userId + ", login=" + login + ", username=" + username + "]";
     }
 }
