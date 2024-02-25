@@ -6,6 +6,9 @@ import connection.ConnectionPool;
 import connection.ConnectionPoolException;
 import model.User;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class UserDAO {
     public static void insertUser(User user) throws DAOException {
         EntityManager em = null;
@@ -56,5 +59,50 @@ public class UserDAO {
                 } catch(ConnectionPoolException ignored) {}
             }
         }
+    }
+
+    public static User getUserById(int userId) throws DAOException {
+        User user = null;
+        EntityManager em = null;
+        try {
+            em = ConnectionPool.getConnection();
+            Query query = em.createNamedQuery("getUserById");
+            query.setParameter("userId", userId);
+            user = (User) query.getSingleResult();
+            if (user == null)
+                throw new SQLException("Receiving user failed, no user found");
+        } catch (Exception e) {
+            throw new DAOException(e);
+        } finally {
+            if (em != null) {
+                try {
+                    ConnectionPool.releaseConnection(em);
+                } catch(ConnectionPoolException ignored) {}
+            }
+        }
+        return user;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<User> getAllAdmins() throws DAOException {
+        List<User> admins;
+        EntityManager em = null;
+        try {
+            em = ConnectionPool.getConnection();
+            Query query = em.createNamedQuery("getAllAdmins");
+            admins = (List<User>)query.getResultList();
+            if (admins.isEmpty())
+                throw new SQLException("Receiving admins failed, no admins found");
+        } catch (Exception e) {
+            throw new DAOException(e);
+        } finally {
+            if (em != null) {
+                try {
+                    ConnectionPool.releaseConnection(em);
+                } catch(ConnectionPoolException ignored) {
+                }
+            }
+        }
+        return admins;
     }
 }

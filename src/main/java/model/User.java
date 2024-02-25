@@ -11,6 +11,16 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
+@NamedQueries({
+        @NamedQuery(
+                name = "getAllAdmins",
+                query = "SELECT u FROM User u WHERE u.isAdmin = true"
+        ),
+        @NamedQuery(
+                name = "getUserById",
+                query = "SELECT u FROM User u WHERE u.userId = :userId"
+        )
+})
 public class User{
     @Getter
     @Id
