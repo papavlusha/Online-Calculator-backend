@@ -41,9 +41,16 @@ public class ConnectionPool {
         }
     }
 
-    public static void closeFactory() {
+    public static void closeConnections() {
+        closeManagers();
         if (factory != null && factory.isOpen()) {
             factory.close();
+        }
+    }
+
+    public static void closeManagers() {
+        for (EntityManager entityManager : pool) {
+            entityManager.close();
         }
     }
 }
