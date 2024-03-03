@@ -4,6 +4,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import jakarta.persistence.*;
 
+import static logging.AppLogger.logError;
+
 public class ConnectionPool {
     private static final BlockingQueue<EntityManager> pool;
     private static final String PERSISTENCE_UNIT_NAME = "simpleFactory";
@@ -18,6 +20,7 @@ public class ConnectionPool {
             for (int i = 0; i < POOL_SIZE; i++)
                 pool.put(factory.createEntityManager());
         } catch (InterruptedException e) {
+            logError(ConnectionPool.class, "Error while creating a connection pool");
             throw new RuntimeException(e);
         }
     }

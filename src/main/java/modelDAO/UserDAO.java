@@ -9,6 +9,9 @@ import model.User;
 import java.sql.SQLException;
 import java.util.List;
 
+import static logging.AppLogger.logError;
+import static logging.AppLogger.logInfo;
+
 public class UserDAO {
     public static void insertUser(User user) throws DAOException {
         EntityManager em = null;
@@ -19,6 +22,7 @@ public class UserDAO {
             transaction.begin();
             em.persist(user);
             transaction.commit();
+            logInfo(UserDAO.class, "Inserted User: " + user);
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
@@ -29,7 +33,9 @@ public class UserDAO {
             if (em != null) {
                 try {
                     ConnectionPool.releaseConnection(em);
-                } catch(ConnectionPoolException ignored) {}
+                } catch(ConnectionPoolException e) {
+                    logError(UserDAO.class, String.valueOf(e));
+                }
             }
         }
     }
@@ -42,21 +48,25 @@ public class UserDAO {
             transaction = em.getTransaction();
             transaction.begin();
             User userToDelete = em.find(User.class, id);
-            if (userToDelete != null) {
+            if (userToDelete != null)
                 em.remove(userToDelete);
-            }
+            else
+                throw new SQLException("Deleting user failed, no rows affected");
             transaction.commit();
+            logInfo(UserDAO.class, "Deleted User: " + userToDelete);
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
-                throw new DAOException("Deleting user failed, no rows affected");
+                throw new DAOException(e);
             }
             throw new DAOException(e);
         } finally {
             if (em != null) {
                 try {
                     ConnectionPool.releaseConnection(em);
-                } catch(ConnectionPoolException ignored) {}
+                } catch(ConnectionPoolException e) {
+                    logError(UserDAO.class, String.valueOf(e));
+                }
             }
         }
     }
@@ -71,13 +81,16 @@ public class UserDAO {
             user = (User) query.getSingleResult();
             if (user == null)
                 throw new SQLException("Receiving user failed, no user found");
+            logInfo(UserDAO.class, "Received User: " + user);
         } catch (Exception e) {
             throw new DAOException(e);
         } finally {
             if (em != null) {
                 try {
                     ConnectionPool.releaseConnection(em);
-                } catch(ConnectionPoolException ignored) {}
+                } catch(ConnectionPoolException e) {
+                    logError(UserDAO.class, String.valueOf(e));
+                }
             }
         }
         return user;
@@ -91,6 +104,7 @@ public class UserDAO {
             em = ConnectionPool.getConnection();
             Query query = em.createNamedQuery("getAllAdmins");
             admins = (List<User>)query.getResultList();
+            logInfo(UserDAO.class, "Got admins: " + admins.size());
             if (admins.isEmpty())
                 throw new SQLException("Receiving admins failed, no admins found");
         } catch (Exception e) {
@@ -99,7 +113,8 @@ public class UserDAO {
             if (em != null) {
                 try {
                     ConnectionPool.releaseConnection(em);
-                } catch(ConnectionPoolException ignored) {
+                } catch(ConnectionPoolException e) {
+                    logError(UserDAO.class, String.valueOf(e));
                 }
             }
         }

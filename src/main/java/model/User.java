@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import modelDAO.DAOException;
-import modelDAO.UserDAO;
 
 import java.sql.Timestamp;
 
