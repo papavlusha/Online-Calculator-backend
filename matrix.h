@@ -25,6 +25,7 @@ public:
     double findDeterminant();
     void print() const;
     Matrix inverseMatrix() const;
+    Matrix transpose();
 
 
 private:

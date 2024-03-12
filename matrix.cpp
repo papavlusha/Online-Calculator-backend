@@ -233,3 +233,14 @@ Matrix Matrix::inverse(int rows, int cols, std::vector<std::vector<double>> matr
     return inverseMatrix;
 
 }
+
+
+Matrix Matrix::transpose(){
+    std::vector<std::vector<double>> transposed(cols, std::vector<double>(rows));
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            transposed[j][i] = data[i][j];
+        }
+    }
+    return Matrix(transposed);
+}

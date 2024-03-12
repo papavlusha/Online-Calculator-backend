@@ -181,19 +181,17 @@ void testDeterminant() {
 }
 
 void testInverseMatrix() {
+    //Тест 1: матрица 3 на 3
     std::vector<std::vector<double>> matrixData = {
         {1, 2, 3},
         {4, 7, 6},
         {7, 8, 9}
     };
-
     Matrix matrix(matrixData);
     Matrix inverseMatrix = matrix.inverseMatrix();
-
     // Проверяем размеры обратной матрицы
     assert(inverseMatrix.getRows() == 3);
     assert(inverseMatrix.getCols() == 3);
-
     // Проверяем значения элементов обратной матрицы
     double epsilon = 1e-6;
     assert(std::abs(inverseMatrix.getData()[0][0] + 0.625) < epsilon);
@@ -205,8 +203,76 @@ void testInverseMatrix() {
     assert(std::abs(inverseMatrix.getData()[2][0] - 0.708333) < epsilon);
     assert(std::abs(inverseMatrix.getData()[2][1] + 0.25) < epsilon);
     assert(std::abs(inverseMatrix.getData()[2][2] - 0.04166667) < epsilon);
+    
+    //Тест 2: вырожденная матрица 3 на 3
+    std::vector<std::vector<double>> matrixData2 = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    Matrix matrix2(matrixData2);
+    try {
+        Matrix inverseMatrix2 = matrix2.inverseMatrix();
+        assert(false); // Можно использовать, если ожидается исключение
+    } catch (const std::runtime_error& error) {
+        std::string expectedError = "Матрица должна быть не вырожденной для вычисления обратной матрицы";
+        assert(error.what() == expectedError);
+    }
 
-    // std::cout << "Тесты для inverseMatrix() пройдены успешно!" << std::endl;
+    //Тест 3: неквадратная матрица 3 на 3
+    std::vector<std::vector<double>> matrixData3 = {
+        {1, 2, 3},
+        {4, 7, 6}
+    };
+    Matrix matrix3(matrixData3);
+    try {
+        Matrix inverseMatrix3 = matrix3.inverseMatrix();
+        assert(false); // Можно использовать, если ожидается исключение
+    } catch (const std::runtime_error& error) {
+        std::string expectedError = "Матрица должна быть квадратной для вычисления обратной матрицы";
+        assert(error.what() == expectedError);
+    }
+}
+
+void testMatrixTranspose() {
+    //Тест 1: матрица 3 на 3
+    std::vector<std::vector<double>> matrixData = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    std::vector<std::vector<double>> transposedMatrixData = {
+        {1, 4, 7},
+        {2, 5, 8},
+        {3, 6, 9}
+    };
+    Matrix matrix(matrixData);
+    Matrix transposedMatrix = matrix.transpose();
+    // Проверяем размеры транспонированной матрицы
+    assert(transposedMatrix.getRows() == 3);
+    assert(transposedMatrix.getCols() == 3);
+    // Проверяем значения элементов транспонированной матрицы
+    assert(transposedMatrix.getData() == transposedMatrixData);
+
+    //Тест 2: матрица 2 на 3
+    std::vector<std::vector<double>> matrixData2 = {
+        {1, 2, 3},
+        {4, 5, 6},
+    };
+    std::vector<std::vector<double>> transposedMatrixData2 = {
+        {1, 4},
+        {2, 5},
+        {3, 6}
+    };
+    Matrix matrix2(matrixData2);
+    Matrix transposedMatrix2 = matrix2.transpose();
+    // Проверяем размеры транспонированной матрицы
+    assert(transposedMatrix2.getRows() == 3);
+    assert(transposedMatrix2.getCols() == 2);
+    // Проверяем значения элементов транспонированной матрицы
+    assert(transposedMatrix2.getData() == transposedMatrixData2);
+
+
 }
 int main() {
     testConstructor();
@@ -223,6 +289,8 @@ int main() {
     std::cout<<"Determinant tests passed\n";
     testInverseMatrix();
     std::cout<<"InverseMatrix tests passed\n";
+    testMatrixTranspose();
+    std::cout<<"MatrixTranspose tests passed\n";
     std::cout << "All tests passed!" << std::endl;
 
     return 0;
