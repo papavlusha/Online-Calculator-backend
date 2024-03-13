@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS `chats`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chats` (
   `chat_id` bigint NOT NULL AUTO_INCREMENT,
-  `chatname` varchar(255) NOT NULL DEFAULT 'new chat',
+  `chat_name` varchar(255) NOT NULL DEFAULT 'new chat',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`chat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -128,4 +128,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-10 13:14:48
+-- Dump completed on 2024-03-13 18:51:24
