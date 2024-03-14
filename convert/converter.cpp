@@ -83,22 +83,3 @@ std::string convertBase(const std::string& number, int sourceBase, int targetBas
 
     return result;
 }
-
-// int main() {
-//     std::string number;
-//     int sourceBase, targetBase;
-
-//     std::cout << "Введите число: ";
-//     std::cin >> number;
-
-//     std::cout << "Введите исходную систему счисления: ";
-//     std::cin >> sourceBase;
-
-//     std::cout << "Введите целевую систему счисления: ";
-//     std::cin >> targetBase;
-
-//     std::string convertedNumber = convertBase(number, sourceBase, targetBase);
-//     std::cout << "Результат конвертации: " << convertedNumber << std::endl;
-
-//     return 0;
-// }
