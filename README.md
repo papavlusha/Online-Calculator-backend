@@ -2,4 +2,4 @@
 
 ## Overview
 
-This is a branch of software for connecting to a client database and executing queries.
+This is a branch of the server-side software of the application under development.
