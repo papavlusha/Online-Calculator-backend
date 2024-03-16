@@ -1,4 +1,4 @@
-package modelDAO;
+package modeldao;
 
 public class DAOException extends Exception {
 

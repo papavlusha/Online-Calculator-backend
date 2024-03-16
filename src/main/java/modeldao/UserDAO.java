@@ -1,4 +1,4 @@
-package modelDAO;
+package modeldao;
 
 import jakarta.persistence.*;
 
@@ -13,6 +13,11 @@ import static logging.AppLogger.logError;
 import static logging.AppLogger.logInfo;
 
 public class UserDAO {
+
+    private UserDAO() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void insertUser(User user) throws DAOException {
         EntityManager em = null;
         EntityTransaction transaction = null;

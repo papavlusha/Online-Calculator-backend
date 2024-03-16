@@ -62,8 +62,8 @@ public class User{
         this.email = email;
         this.userPassword = userPassword;
         this.username = username;
-        this.isAdmin = isAdmin != null ? isAdmin : false;
-        this.isBlocked = isBlocked != null ? isBlocked : false;
+        this.isAdmin = isAdmin != null && isAdmin;
+        this.isBlocked = isBlocked != null && isBlocked;
         this.createdAt = createdAt;
     }
 
