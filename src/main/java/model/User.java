@@ -9,16 +9,14 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users")
-@NamedQueries({
-        @NamedQuery(
-                name = "getAllAdmins",
-                query = "SELECT u FROM User u WHERE u.isAdmin = true"
-        ),
-        @NamedQuery(
-                name = "getUserById",
-                query = "SELECT u FROM User u WHERE u.userId = :userId"
-        )
-})
+@NamedQuery(
+        name = "getAllAdmins",
+        query = "SELECT u FROM User u WHERE u.isAdmin = true"
+)
+@NamedQuery(
+        name = "getUserById",
+        query = "SELECT u FROM User u WHERE u.userId = :userId"
+)
 public class User{
     @Getter
     @Id
@@ -31,17 +29,41 @@ public class User{
     private String login;
 
     @Getter
-    @Setter
-    @Column(name = "username")
-    private String username;
-
-    @Getter
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Getter
     @Column(name = "user_password", nullable = false)
     private String userPassword;
+
+    @Getter
+    @Setter
+    @Column(name = "username")
+    private String username;
+
+    @Getter
+    @Setter
+    @Column(name = "gender")
+    private String gender;
+
+    @Getter
+    @Setter
+    @Column(name = "about")
+    private String about;
+
+    @Getter
+    @Setter
+    @Column(name = "solved_tasks")
+    private int solvedTasks;
+
+    @Getter
+    @Setter
+    @Column(name = "photo")
+    @Lob
+    private byte[] photo;
+
+    @Column(name = "last_activity", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Timestamp lastActivity;
 
     @Getter
     @Setter
@@ -57,11 +79,18 @@ public class User{
     private Timestamp createdAt;
 
     @Builder(toBuilder = true)
-    public User(String login, String email, String userPassword, String username, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
+    public User(String login, String email, String userPassword, String username,
+                String gender, String about, int solvedTasks, byte[] photo,
+                Timestamp lastActivity, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
         this.login = login;
         this.email = email;
         this.userPassword = userPassword;
         this.username = username;
+        this.gender = gender;
+        this.about = about;
+        this.solvedTasks = solvedTasks;
+        this.photo = photo;
+        this.lastActivity = lastActivity;
         this.isAdmin = isAdmin != null && isAdmin;
         this.isBlocked = isBlocked != null && isBlocked;
         this.createdAt = createdAt;
@@ -76,7 +105,8 @@ public class User{
             if (login == null || email == null || userPassword == null) {
                 throw new IllegalArgumentException("Login, email and userPassword must be provided");
             }
-            return new User(login, email, userPassword, username, isAdmin, isBlocked, createdAt);
+            return new User(login, email, userPassword, username, gender, about,
+                    solvedTasks, photo, lastActivity, isAdmin, isBlocked, createdAt);
         }
     }
 
@@ -93,16 +123,26 @@ public class User{
     }
 
     public Timestamp getCreatedAt() {
-        if (createdAt != null) {
-            return new Timestamp(createdAt.getTime());
-        }
-        return null;
+        return copyTimestamp(createdAt);
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        if (createdAt != null) {
-            this.createdAt = new Timestamp(createdAt.getTime());
+    public void setCreatedAt(Timestamp time) {
+        this.createdAt = copyTimestamp(time);
+    }
+
+    public Timestamp getLastActivity() {
+        return copyTimestamp(lastActivity);
+    }
+
+    public void setLastActivity(Timestamp time) {
+        this.lastActivity = copyTimestamp(time);
+    }
+
+    private Timestamp copyTimestamp(Timestamp time) {
+        if (time != null) {
+            return new Timestamp(time.getTime());
         }
+        return null;
     }
 
     @Override
