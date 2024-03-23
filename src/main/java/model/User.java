@@ -17,6 +17,7 @@ import java.sql.Timestamp;
         name = "getUserById",
         query = "SELECT u FROM User u WHERE u.userId = :userId"
 )
+@Builder(toBuilder = true)
 public class User{
     @Getter
     @Id
@@ -62,7 +63,7 @@ public class User{
     @Lob
     private byte[] photo;
 
-    @Column(name = "last_activity", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "last_activity")
     private Timestamp lastActivity;
 
     @Getter
@@ -75,28 +76,10 @@ public class User{
     @Column(name = "is_blocked", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isBlocked;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Builder(toBuilder = true)
-    public User(String login, String email, String userPassword, String username,
-                String gender, String about, int solvedTasks, byte[] photo,
-                Timestamp lastActivity, Boolean isAdmin, Boolean isBlocked, Timestamp createdAt) {
-        this.login = login;
-        this.email = email;
-        this.userPassword = userPassword;
-        this.username = username;
-        this.gender = gender;
-        this.about = about;
-        this.solvedTasks = solvedTasks;
-        this.photo = photo;
-        this.lastActivity = lastActivity;
-        this.isAdmin = isAdmin != null && isAdmin;
-        this.isBlocked = isBlocked != null && isBlocked;
-        this.createdAt = createdAt;
-    }
-
-    public User() {
+    protected User() {
 
     }
 
@@ -105,8 +88,20 @@ public class User{
             if (login == null || email == null || userPassword == null) {
                 throw new IllegalArgumentException("Login, email and userPassword must be provided");
             }
-            return new User(login, email, userPassword, username, gender, about,
-                    solvedTasks, photo, lastActivity, isAdmin, isBlocked, createdAt);
+            User user = new User();
+            user.setLogin(login);
+            user.setEmail(email);
+            user.setUserPassword(userPassword);
+            user.setUsername(username);
+            user.setGender(gender);
+            user.setAbout(about);
+            user.setSolvedTasks(solvedTasks);
+            user.setPhoto(photo);
+            user.setLastActivity(new Timestamp(System.currentTimeMillis()));
+            user.setAdmin(isAdmin);
+            user.setBlocked(isBlocked);
+            user.setCreatedAt(createdAt != null ? createdAt : new Timestamp(System.currentTimeMillis()));
+            return user;
         }
     }
 
