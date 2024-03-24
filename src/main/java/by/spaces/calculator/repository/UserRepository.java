@@ -22,4 +22,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
     default User saveAndReturnUser(User user) {
         return save(user);
     }
+
+    boolean existsByLogin(String login);
+
+    boolean existsByEmail(String email);
 }
