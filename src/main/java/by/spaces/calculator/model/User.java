@@ -1,4 +1,4 @@
-package model;
+package by.spaces.calculator.model;
 
 import jakarta.persistence.*;
 import lombok.Builder;
