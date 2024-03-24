@@ -1,5 +1,6 @@
 package by.spaces.calculator.service;
 
+import by.spaces.calculator.model.CalculatorUserDetails;
 import by.spaces.calculator.model.User;
 import by.spaces.calculator.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,6 @@ public class CalculatorUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Login not found");
         }
-        return (UserDetails) user;
+        return new CalculatorUserDetails(user);
     }
 }

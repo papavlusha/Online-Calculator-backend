@@ -71,6 +71,23 @@ public class User{
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    protected User(User user) {
+        this.userId = user.userId;
+        this.login = user.login;
+        this.email = user.email;
+        this.userPassword = user.userPassword;
+        this.username = user.username;
+        this.gender = user.gender;
+        this.about = user.about;
+        this.solvedTasks = user.solvedTasks;
+        this.photo = user.photo;
+        this.lastActivity = user.lastActivity;
+        this.isAdmin = user.isAdmin;
+        this.isBlocked = user.isBlocked;
+        this.createdAt = user.createdAt;
+
+    }
+
     protected User() {
 
     }
