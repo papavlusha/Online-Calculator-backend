@@ -16,12 +16,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User findUserByLogin(String login);
 
     @Transactional
-    List<User> findUsersByAdminTrue();
-
-    @Transactional
-    default User saveAndReturnUser(User user) {
-        return save(user);
-    }
+    List<User> findUsersByIsAdminTrue();
 
     boolean existsByLogin(String login);
 
