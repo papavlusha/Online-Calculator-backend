@@ -31,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<Void> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        userService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+        userService.loginUser(loginRequest.getLogin(), loginRequest.getPassword());
         return ResponseEntity.ok().build();
     }
 
