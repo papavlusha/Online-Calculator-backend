@@ -27,11 +27,10 @@ public class UserService {
         authenticationManager = a;
     }
 
-    public boolean loginUser(String username, String password) {
+    public void loginUser(String username, String password) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
-        return authentication.isAuthenticated();
+        authentication.isAuthenticated();
     }
 
     public User registerUser(User user) {
