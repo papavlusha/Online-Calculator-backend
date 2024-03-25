@@ -40,7 +40,7 @@ public class UserService {
             logWarn(UserService.class, "login " + user.getLogin() + " already exists.");
 
             throw new UsernameAlreadyExistsException(
-                    String.format("username %s already exists", user.getUsername()));
+                    String.format("login %s already exists", user.getLogin()));
         }
 
         if(userRepository.existsByEmail(user.getEmail())) {
