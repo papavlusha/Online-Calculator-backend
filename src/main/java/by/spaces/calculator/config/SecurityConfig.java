@@ -15,6 +15,22 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            // sign in/up
+            "/signup",
+            "/signin"
+    };
 
     private final UserDetailsService userDetailsService;
 
@@ -38,8 +54,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/signup").permitAll()
-                        .requestMatchers("/signin").permitAll()
+                        //.requestMatchers("/signup").permitAll()
+                        //.requestMatchers("/signin").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
 //                .formLogin(form -> form
 //                        .loginPage("/login")
