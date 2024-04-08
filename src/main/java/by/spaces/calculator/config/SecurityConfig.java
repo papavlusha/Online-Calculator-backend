@@ -29,7 +29,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             // sign in/up
             "/signup",
-            "/signin"
+            "/signin",
+            "/primes"
     };
 
     private final UserDetailsService userDetailsService;
