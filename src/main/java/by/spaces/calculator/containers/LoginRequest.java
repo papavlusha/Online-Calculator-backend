@@ -7,10 +7,8 @@ import lombok.Data;
 @Data
 @Schema(description = "Login request container")
 public class LoginRequest {
-
     @NotBlank
     private String login;
-
     @NotBlank
     private String password;
 }
