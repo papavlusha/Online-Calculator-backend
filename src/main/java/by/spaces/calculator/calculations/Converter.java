@@ -2,7 +2,7 @@ package by.spaces.calculator.calculations;
 
 public class Converter {
     static {
-        System.loadLibrary("converter");
+        System.loadLibrary("Сonverter");
     }
 
     public native String convertBase(String number, int sourceBase, int targetBase);
