@@ -30,7 +30,9 @@ public class SecurityConfig {
             // sign in/up
             "/signup",
             "/signin",
-            "/primes"
+            "/primes",
+            "/converter",
+            "/matrix/**"
     };
 
     private final UserDetailsService userDetailsService;
