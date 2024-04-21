@@ -22,15 +22,15 @@ public class Matrix {
 
     public native int getRows();
     public native int getCols();
-    private native double[][] getData();
-    private native Matrix add(Matrix other);
-    private native Matrix subtract(Matrix other);
-    private native Matrix multiply(double scalar);
-    private native Matrix multiply(Matrix other);
-    private native double findDeterminant();
-    private native void print();
-    private native Matrix inverseMatrix();
-    private native Matrix transpose();
+    public native double[][] getData();
+    public native Matrix add(Matrix other);
+    public native Matrix subtract(Matrix other);
+    public native Matrix multiply(double scalar);
+    public native Matrix multiply(Matrix other);
+    public native double findDeterminant();
+    public native void print();
+    public native Matrix inverseMatrix();
+    public native Matrix transpose();
 
     public Matrix() {
         init();
