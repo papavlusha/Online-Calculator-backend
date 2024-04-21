@@ -13,6 +13,7 @@ import by.spaces.calculator.containers.MatricesRequest;
 import by.spaces.calculator.containers.MatrixWithScalarReq;
 import by.spaces.calculator.service.CalculationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,22 +94,29 @@ public class CalculationController {
     @Operation(summary = "Number conversion", description = "This method Convert numbers to binary, decimal, octal and hexadecimal number systems.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Convert number successfully"),
-            @ApiResponse(responseCode = "403", description = "Conversion failed")
+            @ApiResponse(responseCode = "400", description = "Conversion failed")
     })
     @PostMapping("/converter")
     public ResponseEntity<ConvertResponse> convertNumber(@Valid @RequestBody ConvertRequest convertRequest) {
-        int sourceBase = Integer.parseInt(convertRequest.getSourceBase());
-        String number = convertRequest.getNumber();
-        String bin = service.convertNumber(number, sourceBase, 2);
-        String dec = service.convertNumber(number, sourceBase, 10);
-        String oct = service.convertNumber(number, sourceBase, 8);
-        String hex = service.convertNumber(number, sourceBase, 16);
-        logInfo(CalculationController.class, "Get result: bin - " + bin
-                + ", dec - " + dec
-                + ", oct - " + oct
-                + ", hex - " + hex);
-        ConvertResponse response = new ConvertResponse(bin, dec, oct, hex);
-        return ResponseEntity.ok(response);
+        try{
+            int sourceBase = Integer.parseInt(convertRequest.getSourceBase());
+            String number = convertRequest.getNumber();
+            String bin = service.convertNumber(number, sourceBase, 2);
+            String dec = service.convertNumber(number, sourceBase, 10);
+            String oct = service.convertNumber(number, sourceBase, 8);
+            String hex = service.convertNumber(number, sourceBase, 16);
+            logInfo(CalculationController.class, "Get result: bin - " + bin
+                    + ", dec - " + dec
+                    + ", oct - " + oct
+                    + ", hex - " + hex);
+            ConvertResponse response = new ConvertResponse(bin, dec, oct, hex, null);
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            ConvertResponse errorResponse = new ConvertResponse();
+            errorResponse.setError("Conversion failed: " + e.getMessage());
+            logError(CalculationController.class, errorResponse.getError());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
     }
 
     @Operation(summary = "Matrix determinant", description = "Calculating the determinant of a matrix.")

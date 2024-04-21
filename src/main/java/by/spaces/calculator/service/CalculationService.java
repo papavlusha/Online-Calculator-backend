@@ -8,6 +8,15 @@ import org.springframework.stereotype.Service;
 public class CalculationService {
     private final Converter converter = new Converter();
     public String convertNumber(String number, int sourceBase, int targetBase){
+        if (sourceBase != 2 && sourceBase != 8 && sourceBase != 10 && sourceBase != 16)
+            throw new IllegalArgumentException("Wrong sourceBase");
+        try{
+            double num = Double.parseDouble(number);
+            if (num < 0)
+                throw new IllegalArgumentException();
+        }catch (Exception e){
+            throw new IllegalArgumentException("The number must be non-negative");
+        }
         return converter.convertBase(number, sourceBase, targetBase);
     }
 
