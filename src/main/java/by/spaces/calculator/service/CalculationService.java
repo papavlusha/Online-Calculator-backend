@@ -2,7 +2,13 @@ package by.spaces.calculator.service;
 
 import by.spaces.calculator.calculations.Converter;
 import by.spaces.calculator.calculations.Matrix;
+import by.spaces.calculator.calculations.PrimeNumbersCount;
+import by.spaces.calculator.controller.CalculationController;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ExecutionException;
+
+import static by.spaces.calculator.logging.AppLogger.logError;
 
 @Service
 public class CalculationService {
@@ -27,7 +33,7 @@ public class CalculationService {
         } else if (matrixData instanceof double[][] data) {
             matrix = new Matrix(data);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Wrong matrix data");
         }
         return matrix;
     }
@@ -58,5 +64,45 @@ public class CalculationService {
 
     public double[][] matrixMultiplication(Object matrixData, Object matrixData2){
         return createMatrix(matrixData).multiply(createMatrix(matrixData2)).getData();
+    }
+
+    private void checkRange(Integer start, Integer max){
+        if (max == null || max < 2)
+            throw new IllegalArgumentException("Wrong parameter \"max\"");
+
+        if (start != null && (start < 0 || start > max))
+            throw new IllegalArgumentException("Wrong parameter \"start\"");
+
+    }
+
+    public String[] calculatePrimes(Integer start, Integer max, Integer threadNum, Integer cycle) throws InterruptedException {
+        String[] results;
+        checkRange(start, max);
+        if (start != null && threadNum != null && cycle != null) {
+            try {
+                results = new PrimeNumbersCount(start, max, threadNum, cycle).calculatePrimeCount();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InterruptedException(e.getMessage());
+            }
+        } else if (start != null && threadNum != null) {
+            try {
+                results = new PrimeNumbersCount(start, max, threadNum).calculatePrimeCount();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InterruptedException(e.getMessage());
+            }
+        } else if (start != null) {
+            try {
+                results = new PrimeNumbersCount(start, max).calculatePrimeCount();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InterruptedException(e.getMessage());
+            }
+        } else {
+            try {
+                results = new PrimeNumbersCount(max).calculatePrimeCount();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InterruptedException(e.getMessage());
+            }
+        }
+        return results;
     }
 }

@@ -4,37 +4,37 @@ import java.util.Arrays;
 import java.util.concurrent.*;
 
 public class PrimeNumbersCount {
-    private static int MAX;
-    private static int cycle;
-    private static int startPos;
-    private static int threadsNum;
+    private final int max;
+    private final int cycle;
+    private final int startPos;
+    private final int threadsNum;
 
-    public PrimeNumbersCount(int start, int max, int threads,int cycleParam){
+    public PrimeNumbersCount(int start, int maxParam, int threads,int cycleParam){
         startPos = start;
-        MAX = max;
+        max = maxParam;
         cycle = cycleParam;
         threadsNum = threads;
     }
 
-    public PrimeNumbersCount(int start, int max, int threads){
+    public PrimeNumbersCount(int start, int maxParam, int threads){
         startPos = start;
-        MAX = max;
+        max = maxParam;
         cycle = 10000;
         threadsNum = threads;
     }
 
-    public PrimeNumbersCount(int start, int max){
+    public PrimeNumbersCount(int start, int maxParam){
         startPos = start;
-        MAX = max;
+        max = maxParam;
         cycle = 10000;
-        threadsNum = MAX >= 50_000_000 ? 4 : 2;
+        threadsNum = max >= 50_000_000 ? 4 : 2;
     }
 
-    public PrimeNumbersCount(int max){
+    public PrimeNumbersCount(int maxParam){
         startPos = 2;
-        MAX = max;
+        max = maxParam;
         cycle = 10000;
-        threadsNum = MAX >= 50_000_000 ? 4 : 2;
+        threadsNum = max >= 50_000_000 ? 4 : 2;
     }
 
     private static class CountPrimesTask implements Callable<Integer> {
@@ -42,22 +42,26 @@ public class PrimeNumbersCount {
         private final int start;
         private final int threadsNum;
         private final boolean[] isPrimeArray;
+        private final int cycle;
+        private final int max;
 
-        public CountPrimesTask(int start, int threadsNum) {
+        public CountPrimesTask(int start, int max, int threadsNum, int cycle) {
             this.count = 0;
             this.start = start;
             this.threadsNum = threadsNum;
+            this.cycle = cycle;
+            this.max = max;
             this.isPrimeArray = new boolean[cycle + 1];
         }
 
         @Override
         public Integer call() {
             int i;
-            for (i = start; i < MAX - cycle; i += cycle * threadsNum) {
+            for (i = start; i < max - cycle; i += cycle * threadsNum) {
                 count += countPrimes(i, i + cycle, isPrimeArray);
             }
-            if (i - MAX < 0) {
-                count += countPrimes(i, MAX + 1, isPrimeArray);
+            if (i - max <= 0) {
+                count += countPrimes(i, max + 1, isPrimeArray);
             }
             return count;
         }
@@ -80,14 +84,16 @@ public class PrimeNumbersCount {
 
     public String[] calculatePrimeCount() throws ExecutionException, InterruptedException {
         if (threadsNum < 1 || threadsNum > 30)
-            throw new IllegalArgumentException("the number of threads should be from 1 to 30");
+            throw new IllegalArgumentException("the number of threads must be from 1 to 30");
+        if (cycle < 1)
+            throw new IllegalArgumentException("the cycle must be greater than 1");
 
         ExecutorService executor = Executors.newFixedThreadPool(threadsNum);
         Future<Integer>[] futures = new Future[threadsNum];
 
         for (int i = 0; i < threadsNum; i++) {
             int start = i * cycle + startPos;
-            futures[i] = executor.submit(new CountPrimesTask(start, threadsNum));
+            futures[i] = executor.submit(new CountPrimesTask(start, max, threadsNum, cycle));
         }
 
         long startTimeMulti = System.currentTimeMillis();

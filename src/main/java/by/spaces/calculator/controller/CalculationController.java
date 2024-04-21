@@ -1,6 +1,5 @@
 package by.spaces.calculator.controller;
 
-import by.spaces.calculator.calculations.PrimeNumbersCount;
 import by.spaces.calculator.containers.PrimeCountRequest;
 import by.spaces.calculator.containers.PrimeCountResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,8 +31,8 @@ import static by.spaces.calculator.logging.AppLogger.logInfo;
 public class CalculationController {
     @Operation(summary = "Calculating the number of prime numbers", description = "This method calculates the number of prime numbers on the interval with given multithreading parameters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Count primes successfully"),
-            @ApiResponse(responseCode = "401", description = "Count failed")
+            @ApiResponse(responseCode = "200", description = "Count primes successfully"),
+            @ApiResponse(responseCode = "400", description = "Count failed")
     })
     @PostMapping("/primes")
     public ResponseEntity<PrimeCountResponse> calculatePrimes(@Valid @RequestBody PrimeCountRequest request) {
@@ -41,52 +40,23 @@ public class CalculationController {
         Integer start = request.getStart();
         Integer threadNum = request.getThreads();
         Integer cycle = request.getCycleParam();
-
-        String[] results = new String[2];
-
-        if (max == null) {
-            logError(CalculationController.class, "Error: required parameter is empty");
-            return ResponseEntity
-                    .badRequest()
-                    .body(new PrimeCountResponse(null, null));
+        try{
+            String[] results = service.calculatePrimes(start, max, threadNum, cycle);
+            logInfo(CalculationController.class, "Get result: " + Arrays.toString(results));
+            return ResponseEntity.ok(new PrimeCountResponse(results[0], results[1], null));
+        } catch (Exception e){
+            return handleException(e);
         }
+    }
 
-        if (start != null && threadNum != null && cycle != null) {
-            try {
-                results = new PrimeNumbersCount(start, max, threadNum, cycle).calculatePrimeCount();
-            } catch (ExecutionException | InterruptedException e) {
-                logError(CalculationController.class, e.getMessage());
-                Thread.currentThread().interrupt();
-            }
-        } else if (start != null && threadNum != null) {
-            try {
-                results = new PrimeNumbersCount(start, max, threadNum).calculatePrimeCount();
-            } catch (ExecutionException | InterruptedException e) {
-                logError(CalculationController.class, e.getMessage());
-                Thread.currentThread().interrupt();
-            }
-        } else if (start != null) {
-            try {
-                results = new PrimeNumbersCount(start, max).calculatePrimeCount();
-            } catch (ExecutionException | InterruptedException e) {
-                logError(CalculationController.class, e.getMessage());
-                Thread.currentThread().interrupt();
-            }
-        } else {
-            try {
-                results = new PrimeNumbersCount(max).calculatePrimeCount();
-            } catch (ExecutionException | InterruptedException e) {
-                logError(CalculationController.class, e.getMessage());
-                Thread.currentThread().interrupt();
-            }
+    private ResponseEntity<PrimeCountResponse> handleException(Exception e) {
+        if (e instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
         }
-        logInfo(CalculationController.class, "Get result: " + Arrays.toString(results));
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/primes")
-                .buildAndExpand().toUri();
-        return ResponseEntity
-                .created(location)
-                .body(new PrimeCountResponse(results[0], results[1]));
+        PrimeCountResponse errorResponse = new PrimeCountResponse();
+        errorResponse.setError("Prime calculation failed: " + e.getMessage());
+        logError(CalculationController.class, errorResponse.getError());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     private final CalculationService service = new CalculationService();
@@ -122,12 +92,18 @@ public class CalculationController {
     @Operation(summary = "Matrix determinant", description = "Calculating the determinant of a matrix.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The determinant has been calculated successfully"),
-            @ApiResponse(responseCode = "403", description = "Calculation of the determinant failed")
+            @ApiResponse(responseCode = "400", description = "Calculation of the determinant failed")
     })
     @PostMapping("/matrix/determinant")
     public ResponseEntity<String> getMatrixDeterminant(@Valid @RequestBody Object requestData) {
-        String determinant = String.valueOf(service.getDeterminant(requestData));
-        return ResponseEntity.ok(determinant);
+        try{
+            String determinant = String.valueOf(service.getDeterminant(requestData));
+            return ResponseEntity.ok(determinant);
+        } catch (Exception e){
+            String error = "Determinant calculation failed: " + e.getMessage();
+            logError(CalculationController.class, error);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
     }
 
     @Operation(summary = "Inverse matrix", description = "Inverse matrix calculation.")
