@@ -18,6 +18,4 @@ public class ConvertResponse {
     private String octalNumber;
     @Schema(description = "Hexadecimal number", example = "19")
     private String hexadecimalNumber;
-    @Schema(description = "Error message", example = "null")
-    private String error;
 }

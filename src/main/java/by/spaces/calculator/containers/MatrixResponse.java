@@ -12,6 +12,4 @@ import lombok.NoArgsConstructor;
 public class MatrixResponse {
     @Schema(description = "Data of the obtained matrix", example = "[[1, 2], [3, 4]]")
     private double[][] matrix;
-    @Schema(description = "Error message", example = "null")
-    private String error;
 }

@@ -14,6 +14,4 @@ public class PrimeCountResponse {
     private String result;
     @Schema(description = "Calculation time of prime numbers in the range in seconds", example = "0.113")
     private String time;
-    @Schema(description = "Error message", example = "null")
-    private String error;
 }
