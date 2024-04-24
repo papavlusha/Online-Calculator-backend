@@ -26,11 +26,13 @@ import static by.spaces.calculator.logging.AppLogger.logInfo;
 public class CalculationController {
     @Operation(summary = "Calculating the number of prime numbers", description = "This method calculates the number of prime numbers on the interval with given multithreading parameters")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Count primes successfully"),
-            @ApiResponse(responseCode = "400", description = "Count failed")
+            @ApiResponse(responseCode = "200", description = "Count primes successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PrimeCountResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Count failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/primes")
-    public ResponseEntity<PrimeCountResponse> calculatePrimes(@Valid @RequestBody PrimeCountRequest request) {
+    public ResponseEntity<Object> calculatePrimes(@Valid @RequestBody PrimeCountRequest request) {
         Integer max = request.getMax();
         Integer start = request.getStart();
         Integer threadNum = request.getThreads();
@@ -38,31 +40,23 @@ public class CalculationController {
         try{
             String[] results = service.calculatePrimes(start, max, threadNum, cycle);
             logInfo(CalculationController.class, "Get primes result: " + Arrays.toString(results));
-            return ResponseEntity.ok(new PrimeCountResponse(results[0], results[1], null));
+            return ResponseEntity.ok(new PrimeCountResponse(results[0], results[1]));
         } catch (Exception e){
-            return handleException(e);
+            return handleException("Prime calculation failed: ", e);
         }
-    }
-
-    private ResponseEntity<PrimeCountResponse> handleException(Exception e) {
-        if (e instanceof InterruptedException) {
-            Thread.currentThread().interrupt();
-        }
-        PrimeCountResponse errorResponse = new PrimeCountResponse();
-        errorResponse.setError("Prime calculation failed: " + e.getMessage());
-        logError(CalculationController.class, errorResponse.getError());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     private final CalculationService service = new CalculationService();
 
     @Operation(summary = "Number conversion", description = "This method Convert numbers to binary, decimal, octal and hexadecimal number systems.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Convert number successfully"),
-            @ApiResponse(responseCode = "400", description = "Conversion failed")
+            @ApiResponse(responseCode = "200", description = "Convert number successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ConvertResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Conversion failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/converter")
-    public ResponseEntity<ConvertResponse> convertNumber(@Valid @RequestBody ConvertRequest convertRequest) {
+    public ResponseEntity<Object> convertNumber(@Valid @RequestBody ConvertRequest convertRequest) {
         try{
             int sourceBase = Integer.parseInt(convertRequest.getSourceBase());
             String number = convertRequest.getNumber();
@@ -74,11 +68,10 @@ public class CalculationController {
                     + ", dec - " + dec
                     + ", oct - " + oct
                     + ", hex - " + hex);
-            ConvertResponse response = new ConvertResponse(bin, dec, oct, hex, null);
+            ConvertResponse response = new ConvertResponse(bin, dec, oct, hex);
             return ResponseEntity.ok(response);
         } catch (Exception e){
-            ConvertResponse errorResponse = new ConvertResponse();
-            errorResponse.setError("Conversion failed: " + e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse("Conversion failed: " + e.getMessage());
             logError(CalculationController.class, errorResponse.getError());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
@@ -112,109 +105,121 @@ public class CalculationController {
 
     @Operation(summary = "Inverse matrix", description = "Inverse matrix calculation.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Inverse matrix calculated successfully"),
-            @ApiResponse(responseCode = "400", description = "Inverse matrix calculation failed")
+            @ApiResponse(responseCode = "200", description = "Inverse matrix calculated successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MatrixResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Inverse matrix calculation failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/matrix/inverse")
-    public ResponseEntity<MatrixResponse> inverseMatrix(@Valid @RequestBody
+    public ResponseEntity<Object> inverseMatrix(@Valid @RequestBody
                                                             @Schema(example = "[[1,2],[3,4]]")
                                                             Object requestData) {
         try{
             double[][] matrix = service.getInverseMatrix(requestData);
             logInfo(CalculationController.class, "Get inverse result: " + Arrays.toString(matrix));
-            return ResponseEntity.ok(new MatrixResponse(matrix, null));
+            return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
-            return handleMatrixException("Inverse matrix calculation failed: ", e);
+            return handleException("Inverse matrix calculation failed: ", e);
         }
     }
 
     @Operation(summary = "Transpose matrix", description = "Transpose matrix calculation.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Transpose matrix calculated successfully"),
-            @ApiResponse(responseCode = "400", description = "Transpose matrix calculation failed")
+            @ApiResponse(responseCode = "200", description = "Transpose matrix calculated successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MatrixResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Transpose matrix calculation failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/matrix/transpose")
-    public ResponseEntity<MatrixResponse> transposeMatrix(@Valid @RequestBody
+    public ResponseEntity<Object> transposeMatrix(@Valid @RequestBody
                                                               @Schema(example = "[[1,2],[3,4]]")
                                                               Object requestData) {
         try{
             double[][] matrix = service.getTransposeMatrix(requestData);
             logInfo(CalculationController.class, "Get transpose result: " + Arrays.toString(matrix));
-            return ResponseEntity.ok(new MatrixResponse(matrix, null));
+            return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
-            return handleMatrixException("Transpose matrix calculation failed: ", e);
+            return handleException("Transpose matrix calculation failed: ", e);
         }
     }
 
     @Operation(summary = "Multiplication of a matrix by a scalar", description = "Calculating a matrix by multiplying the original matrix by a scalar.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Matrix multiplied by a scalar successfully"),
-            @ApiResponse(responseCode = "400", description = "Matrix multiplication by scalar failed")
+            @ApiResponse(responseCode = "200", description = "Matrix multiplied by a scalar successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MatrixResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Matrix multiplication by scalar failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/matrix/multiply_by_scalar")
-    public ResponseEntity<MatrixResponse> multiplyMatrixByScalar(@Valid @RequestBody MatrixWithScalarReq requestData) {
+    public ResponseEntity<Object> multiplyMatrixByScalar(@Valid @RequestBody MatrixWithScalarReq requestData) {
         try{
             double[][] matrix = service.matrixMultiplyByScalar(requestData.getMatrixData(), requestData.getScalar());
             logInfo(CalculationController.class, "Get scalar multiply result: " + Arrays.toString(matrix));
-            return ResponseEntity.ok(new MatrixResponse(matrix, null));
+            return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
-            return handleMatrixException("Matrix multiplication by scalar failed: ", e);
+            return handleException("Matrix multiplication by scalar failed: ", e);
         }
     }
 
     @Operation(summary = "Matrix addition", description = "Adding two matrices of the same size.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Matrix addition was successful"),
-            @ApiResponse(responseCode = "400", description = "Matrix addition failed")
+            @ApiResponse(responseCode = "200", description = "Matrix addition was successful",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MatrixResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Matrix addition failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/matrix/add")
-    public ResponseEntity<MatrixResponse> addMatrix(@Valid @RequestBody MatricesRequest requestData) {
+    public ResponseEntity<Object> addMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
             double[][] matrix = service.matrixAddition(requestData.getMatrixData(), requestData.getMatrixData2());
             logInfo(CalculationController.class, "Get matrix addition result: " + Arrays.toString(matrix));
-            return ResponseEntity.ok(new MatrixResponse(matrix, null));
+            return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
-            return handleMatrixException("Matrix addition failed: ", e);
+            return handleException("Matrix addition failed: ", e);
         }
     }
 
     @Operation(summary = "Matrix subtraction", description = "Subtraction two matrices of the same size.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Matrix subtraction was successful"),
-            @ApiResponse(responseCode = "400", description = "Matrix subtraction failed")
+            @ApiResponse(responseCode = "200", description = "Matrix subtraction was successful",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MatrixResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Matrix subtraction failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/matrix/subtract")
-    public ResponseEntity<MatrixResponse> subtractMatrix(@Valid @RequestBody MatricesRequest requestData) {
+    public ResponseEntity<Object> subtractMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
             double[][] matrix = service.matrixSubtraction(requestData.getMatrixData(), requestData.getMatrixData2());
             logInfo(CalculationController.class, "Get matrix subtraction result: " + Arrays.toString(matrix));
-            return ResponseEntity.ok(new MatrixResponse(matrix, null));
+            return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
-            return handleMatrixException("Matrix subtraction failed: ", e);
+            return handleException("Matrix subtraction failed: ", e);
         }
     }
 
     @Operation(summary = "Matrix multiplication", description = "Multiplication two matrices.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Matrix multiplication was successful"),
-            @ApiResponse(responseCode = "400", description = "Matrix multiplication failed")
+            @ApiResponse(responseCode = "200", description = "Matrix multiplication was successful",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MatrixResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Matrix multiplication failed",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/matrix/multiply")
-    public ResponseEntity<MatrixResponse> multiplyMatrix(@Valid @RequestBody MatricesRequest requestData) {
+    public ResponseEntity<Object> multiplyMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
             double[][] matrix = service.matrixMultiplication(requestData.getMatrixData(), requestData.getMatrixData2());
             logInfo(CalculationController.class, "Get matrix multiplication result: " + Arrays.toString(matrix));
-            return ResponseEntity.ok(new MatrixResponse(matrix, null));
+            return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
-            return handleMatrixException("Matrix multiplication failed: ", e);
+            return handleException("Matrix multiplication failed: ", e);
         }
     }
 
-    private ResponseEntity<MatrixResponse> handleMatrixException(String err, Exception e) {
-        String error = err + e.getMessage();
-        logError(CalculationController.class, error);
-        MatrixResponse errorResponse = new MatrixResponse();
-        errorResponse.setError(error);
+    private ResponseEntity<Object> handleException(String err, Exception e) {
+        if (e instanceof InterruptedException)
+            Thread.currentThread().interrupt();
+        ErrorResponse errorResponse = new ErrorResponse(err + e.getMessage());
+        logError(CalculationController.class, errorResponse.getError());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }
