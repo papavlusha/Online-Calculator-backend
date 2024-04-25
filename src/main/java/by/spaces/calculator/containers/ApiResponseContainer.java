@@ -9,7 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "API response container")
 public class ApiResponseContainer {
-    @Schema(description = "Success flag", examples = {"true", "false"})
+    @Schema(description = "Success flag", examples = "true")
     private Boolean success;
     @Schema(description = "Result message", example = "User authorization result")
     private String message;
