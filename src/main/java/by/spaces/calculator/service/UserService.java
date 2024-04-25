@@ -28,12 +28,12 @@ public class UserService {
     }
 
     public void loginUser(String username, String password) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        authentication.isAuthenticated();
+//        Authentication authentication = authenticationManager
+//                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
-    public User registerUser(User user) {
+    public void registerUser(User user) {
         logInfo(UserService.class, "registering user " + user.getUsername());
 
         if(userRepository.existsByLogin(user.getLogin())) {
@@ -50,7 +50,7 @@ public class UserService {
                     String.format("email %s already exists", user.getEmail()));
         }
         user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public List<User> findAll() {

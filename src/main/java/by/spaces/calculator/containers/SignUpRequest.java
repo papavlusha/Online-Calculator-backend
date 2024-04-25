@@ -15,7 +15,7 @@ public class SignUpRequest {
     private String login;
 
     @Schema(description = "Username", example = "Oleg")
-    @NotBlank
+//    @NotBlank
     @Size(min = 3, max = 15)
     private String username;
 
