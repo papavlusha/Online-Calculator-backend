@@ -116,7 +116,7 @@ public class CalculationController {
                                                             Object requestData) {
         try{
             double[][] matrix = service.getInverseMatrix(requestData);
-            logInfo(CalculationController.class, "Get inverse result: " + Arrays.toString(matrix));
+            logInfo(CalculationController.class, "Get inverse result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Inverse matrix calculation failed: ", e);
@@ -136,7 +136,7 @@ public class CalculationController {
                                                               Object requestData) {
         try{
             double[][] matrix = service.getTransposeMatrix(requestData);
-            logInfo(CalculationController.class, "Get transpose result: " + Arrays.toString(matrix));
+            logInfo(CalculationController.class, "Get transpose result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Transpose matrix calculation failed: ", e);
@@ -154,7 +154,7 @@ public class CalculationController {
     public ResponseEntity<Object> multiplyMatrixByScalar(@Valid @RequestBody MatrixWithScalarReq requestData) {
         try{
             double[][] matrix = service.matrixMultiplyByScalar(requestData.getMatrixData(), requestData.getScalar());
-            logInfo(CalculationController.class, "Get scalar multiply result: " + Arrays.toString(matrix));
+            logInfo(CalculationController.class, "Get scalar multiply result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix multiplication by scalar failed: ", e);
@@ -172,7 +172,7 @@ public class CalculationController {
     public ResponseEntity<Object> addMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
             double[][] matrix = service.matrixAddition(requestData.getMatrixData(), requestData.getMatrixData2());
-            logInfo(CalculationController.class, "Get matrix addition result: " + Arrays.toString(matrix));
+            logInfo(CalculationController.class, "Get matrix addition result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix addition failed: ", e);
@@ -190,7 +190,7 @@ public class CalculationController {
     public ResponseEntity<Object> subtractMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
             double[][] matrix = service.matrixSubtraction(requestData.getMatrixData(), requestData.getMatrixData2());
-            logInfo(CalculationController.class, "Get matrix subtraction result: " + Arrays.toString(matrix));
+            logInfo(CalculationController.class, "Get matrix subtraction result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix subtraction failed: ", e);
@@ -208,7 +208,7 @@ public class CalculationController {
     public ResponseEntity<Object> multiplyMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
             double[][] matrix = service.matrixMultiplication(requestData.getMatrixData(), requestData.getMatrixData2());
-            logInfo(CalculationController.class, "Get matrix multiplication result: " + Arrays.toString(matrix));
+            logInfo(CalculationController.class, "Get matrix multiplication result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix multiplication failed: ", e);
@@ -221,5 +221,24 @@ public class CalculationController {
         ErrorResponse errorResponse = new ErrorResponse(err + e.getMessage());
         logError(CalculationController.class, errorResponse.getError());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    public static String arrayToString(double[][] matrix) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < matrix.length; i++) {
+            sb.append("[");
+            for (int j = 0; j < matrix[i].length; j++) {
+                sb.append(matrix[i][j]);
+                if (j < matrix[i].length - 1) {
+                    sb.append(", ");
+                }
+            }
+            if (i < matrix.length - 1) {
+                sb.append("], ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }
