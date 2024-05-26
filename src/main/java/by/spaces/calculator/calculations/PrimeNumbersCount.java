@@ -83,8 +83,8 @@ public class PrimeNumbersCount {
     }
 
     public String[] calculatePrimeCount() throws ExecutionException, InterruptedException {
-        if (threadsNum < 1 || threadsNum > 30)
-            throw new IllegalArgumentException("the number of threads must be from 1 to 30");
+        if (threadsNum < 1 || threadsNum > 10)
+            throw new IllegalArgumentException("the number of threads must be from 1 to 10");
         if (cycle < 1)
             throw new IllegalArgumentException("the cycle must be greater than 1");
 
