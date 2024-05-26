@@ -20,8 +20,14 @@ public class Message {
     @Getter
     @Setter
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
+
+    @Getter
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 
     @Getter
     @Setter
@@ -37,11 +43,12 @@ public class Message {
 
     public static class MessageBuilder {
         public Message build() {
-            if (user == null || content == null) {
+            if (sender == null || receiver == null ||content == null) {
                 throw new IllegalArgumentException("User and content must be provided");
             }
             Message mes = new Message();
-            mes.setUser(user);
+            mes.setSender(sender);
+            mes.setReceiver(receiver);
             mes.setContent(content);
             mes.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             return mes;

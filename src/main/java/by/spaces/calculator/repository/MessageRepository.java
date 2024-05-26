@@ -12,5 +12,8 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
     Message findMessageByMessageId(Long id);
 
     @Transactional
-    Message findMessagesByUser(User u);
+    Message findMessagesBySender(User u);
+
+    @Transactional
+    Message findMessagesByReceiver(User u);
 }

@@ -51,12 +51,15 @@ DROP TABLE IF EXISTS `messages`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `messages` (
                             `message_id` bigint NOT NULL AUTO_INCREMENT,
-                            `user_id` bigint NOT NULL,
+                            `sender_id` bigint NOT NULL,
+                            `receiver_id` bigint DEFAULT NULL,
                             `content` text NOT NULL,
                             `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             PRIMARY KEY (`message_id`),
-                            KEY `user_id` (`user_id`),
-                            CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+                            KEY `user_id` (`sender_id`),
+                            KEY `receiver_idx` (`receiver_id`),
+                            CONSTRAINT `receiver` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`),
+                            CONSTRAINT `sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -77,14 +80,14 @@ CREATE TABLE `users` (
                          `about` text,
                          `solved_tasks` int DEFAULT '0',
                          `photo` blob,
-                         `last_activity` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         `last_activity` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                          `is_admin` tinyint(1) NOT NULL DEFAULT '0',
                          `is_blocked` tinyint(1) NOT NULL DEFAULT '0',
-                         `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                          PRIMARY KEY (`user_id`),
                          UNIQUE KEY `login` (`login`),
                          UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -96,4 +99,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-21 11:18:04
+-- Dump completed on 2024-05-26 22:40:36
