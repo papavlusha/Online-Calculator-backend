@@ -1,22 +1,21 @@
 package by.spaces.calculator.config;
 
+import by.spaces.calculator.model.CalculatorUserDetails;
+import by.spaces.calculator.model.User;
 import by.spaces.calculator.service.JwtService;
 import by.spaces.calculator.service.UserService;
 import io.jsonwebtoken.Claims;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
+@Configuration
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtConfig jwtConfig;
@@ -57,22 +56,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(tokenProvider.validateToken(token)) {
             Claims claims = tokenProvider.getClaimsFromJWT(token);
-            String username = claims.getSubject();
+            String login = claims.getSubject();
 
+            User user = userService.findByLogin(login);
+            CalculatorUserDetails userDetails = new CalculatorUserDetails(user);
             UsernamePasswordAuthenticationToken auth =
-                    userService.findByUsername(username)
-                            .map(InstaUserDetails::new)
-                            .map(userDetails -> {
-                                UsernamePasswordAuthenticationToken authentication =
-                                        new UsernamePasswordAuthenticationToken(
-                                                userDetails, null, userDetails.getAuthorities());
-                                authentication
-                                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                                return authentication;
-                            })
-                            .orElse(null);
-
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         } else {
             SecurityContextHolder.clearContext();
