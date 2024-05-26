@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import static by.spaces.calculator.logging.AppLogger.logError;
-import static by.spaces.calculator.logging.AppLogger.logInfo;
+import static by.spaces.calculator.logging.AppLogger.*;
 
 @Tag(name = "Authentication controller", description = "Controller with methods for user authentication")
 @RestController
@@ -82,7 +81,7 @@ public class AuthController {
             return ResponseEntity.ok().body(response);
         } catch (UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
             ApiResponseContainer errorResponse = new ApiResponseContainer(false, e.getMessage());
-            logError(AuthController.class, errorResponse.getMessage());
+            logWarn(AuthController.class, errorResponse.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }

@@ -37,15 +37,11 @@ public class AuthUserService {
         logInfo(AuthUserService.class, "registering user " + user.getUsername());
 
         if(userRepository.existsByLogin(user.getLogin())) {
-            logWarn(AuthUserService.class, "login " + user.getLogin() + " already exists.");
-
             throw new UsernameAlreadyExistsException(
                     String.format("login %s already exists", user.getLogin()));
         }
 
         if(userRepository.existsByEmail(user.getEmail())) {
-            logWarn(AuthUserService.class, "email " + user.getEmail() + " already exists.");
-
             throw new EmailAlreadyExistsException(
                     String.format("email %s already exists", user.getEmail()));
         }
