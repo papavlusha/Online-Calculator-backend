@@ -2,11 +2,15 @@ package by.spaces.calculator.model;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "users")
 @Builder(toBuilder = true)
@@ -71,6 +75,11 @@ public class User{
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    @Transient
+    private boolean active;
+    @Transient
+    private Set<String> roles;
+
     protected User(User user) {
         this.userId = user.userId;
         this.login = user.login;
@@ -85,7 +94,7 @@ public class User{
         this.isAdmin = user.isAdmin;
         this.isBlocked = user.isBlocked;
         this.createdAt = user.createdAt;
-
+        this.roles = new HashSet<>() {{ new String("USER"); }};
     }
 
     protected User() {
@@ -110,6 +119,7 @@ public class User{
             user.setAdmin(isAdmin);
             user.setBlocked(isBlocked);
             user.setCreatedAt(createdAt != null ? createdAt : new Timestamp(System.currentTimeMillis()));
+            user.roles = new HashSet<>() {{ new String("USER"); }};
             return user;
         }
     }
