@@ -1,11 +1,12 @@
 package by.spaces.calculator.controller;
 
 import by.spaces.calculator.containers.ApiResponseContainer;
+import by.spaces.calculator.containers.JwtAuthenticationResponse;
 import by.spaces.calculator.containers.LoginRequest;
 import by.spaces.calculator.containers.SignUpRequest;
 import by.spaces.calculator.model.User;
 import by.spaces.calculator.service.EmailAlreadyExistsException;
-import by.spaces.calculator.service.UserService;
+import by.spaces.calculator.service.AuthUserService;
 import by.spaces.calculator.service.UsernameAlreadyExistsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,10 +29,10 @@ import static by.spaces.calculator.logging.AppLogger.logInfo;
 @Tag(name = "Authentication controller", description = "Controller with methods for user authentication")
 @RestController
 public class AuthController {
-    private final UserService userService;
+    private final AuthUserService userService;
 
     @Autowired
-    public AuthController(UserService u){
+    public AuthController(AuthUserService u){
         userService = u;
     }
 
@@ -43,11 +44,11 @@ public class AuthController {
                             examples = @ExampleObject(value = "{\"success\": false, \"message\": \"User authorization result\"}")))
     })
     @PostMapping("/signin")
-    public ResponseEntity<ApiResponseContainer> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try{
-            userService.loginUser(loginRequest.getLogin(), loginRequest.getPassword());
-            ApiResponseContainer response = new ApiResponseContainer(true, loginRequest.getLogin() + " authorization succeeded");
-            logInfo(AuthController.class, response.getMessage());
+            String token = userService.loginUser(loginRequest.getLogin(), loginRequest.getPassword());
+            JwtAuthenticationResponse response = new JwtAuthenticationResponse(token);
+            logInfo(AuthController.class, loginRequest.getLogin() + " authorization succeeded");
             return ResponseEntity.ok().body(response);
         } catch (Exception e){
             ApiResponseContainer errorResponse = new ApiResponseContainer(false, "User authorization failed");
