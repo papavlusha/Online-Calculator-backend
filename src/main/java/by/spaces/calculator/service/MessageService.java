@@ -22,6 +22,8 @@ public class MessageService {
 
     public void saveMessage(ClientMessage clientMessage) {
         try{
+//            if (clientMessage.getMessage() == null || )
+//                return;
             Message message = Message.builder()
                     .sender(userRepository.findUserByLogin(clientMessage.getSenderName()))
                     .receiver(userRepository.findUserByLogin(clientMessage.getReceiverName()))

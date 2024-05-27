@@ -26,7 +26,8 @@ public class ChatController {
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
     public ClientMessage receivePublicMessage(@Payload ClientMessage message){
-        messageService.saveMessage(message);
+        logInfo(ChatController.class, String.valueOf(message));
+        //messageService.saveMessage(message);
         logInfo(ChatController.class, "Receive public message");
         return message;
     }
