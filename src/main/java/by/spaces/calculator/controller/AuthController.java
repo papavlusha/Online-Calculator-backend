@@ -1,9 +1,6 @@
 package by.spaces.calculator.controller;
 
-import by.spaces.calculator.containers.ApiResponseContainer;
-import by.spaces.calculator.containers.JwtAuthenticationResponse;
-import by.spaces.calculator.containers.LoginRequest;
-import by.spaces.calculator.containers.SignUpRequest;
+import by.spaces.calculator.containers.*;
 import by.spaces.calculator.model.User;
 import by.spaces.calculator.service.EmailAlreadyExistsException;
 import by.spaces.calculator.service.AuthUserService;
@@ -11,6 +8,7 @@ import by.spaces.calculator.service.UsernameAlreadyExistsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +35,8 @@ public class AuthController {
 
     @Operation(summary = "Authenticate the user", description = "This method authenticates the user based on the provided login credentials.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Authenticated successfully"),
+            @ApiResponse(responseCode = "200", description = "Authenticated successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtAuthenticationResponse.class))),
             @ApiResponse(responseCode = "400", description = "Authentication failed",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             examples = @ExampleObject(value = "{\"success\": false, \"message\": \"User authorization result\"}")))
