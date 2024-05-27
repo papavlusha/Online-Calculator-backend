@@ -1,10 +1,12 @@
 package by.spaces.calculator.calculations.java;
 
+import by.spaces.calculator.calculations.Matrix;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class MatrixJ {
+public class MatrixJ implements Matrix {
     public int rows;
     public int cols;
     public List<List<Double>> data;
@@ -53,20 +55,43 @@ public class MatrixJ {
         return convertListListToArray(data);
     }
 
+    @Override
+    public Matrix addMatrix(Matrix other) {
+        return this.add((MatrixJ) other);
+    }
+
+    @Override
+    public Matrix subtractMatrix(Matrix other) {
+        return this.subtract((MatrixJ) other);
+    }
+
+    @Override
+    public Matrix multiplyMatrix(double scalar) {
+        return this.multiply(scalar);
+    }
+
+    @Override
+    public Matrix multiplyMatrix(Matrix other) {
+        return this.multiply((MatrixJ) other);
+    }
+
     public MatrixJ(String inputString) {
         Scanner scanner = new Scanner(inputString);
         if (scanner.hasNextInt()) {
             this.rows = scanner.nextInt();
         } else {
+            scanner.close();
             throw new RuntimeException("Неправильный формат размерности матрицы");
         }
         if (scanner.hasNextInt()) {
             this.cols = scanner.nextInt();
         } else {
+            scanner.close();
             throw new RuntimeException("Неправильный формат размерности матрицы");
         }
 
         if (rows <= 0 || cols <= 0) {
+            scanner.close();
             throw new RuntimeException("Неправильный формат размерности матрицы");
         }
 
@@ -80,14 +105,17 @@ public class MatrixJ {
                         double element = Double.parseDouble(elementStr);
                         row.add(element);
                     } catch (NumberFormatException e) {
+                        scanner.close();
                         throw new RuntimeException("Неправильный формат элемента матрицы");
                     }
                 } else {
+                    scanner.close();
                     throw new RuntimeException("Количество элементов матрицы не соответствует размерности");
                 }
             }
             this.data.add(row);
         }
+        scanner.close();
     }
 
     public MatrixJ add(MatrixJ other) {

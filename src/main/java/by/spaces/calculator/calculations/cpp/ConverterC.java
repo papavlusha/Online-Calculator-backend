@@ -1,10 +1,13 @@
 package by.spaces.calculator.calculations.cpp;
 
-import java.io.*;
+import by.spaces.calculator.calculations.Converter;
+
+import java.io.IOException;
 
 import static by.spaces.calculator.calculations.ExtractLibClass.extractLibrary;
 
-public class ConverterC {
+
+public class ConverterC implements Converter {
     static {
         try {
             System.load(extractLibrary("Converter"));

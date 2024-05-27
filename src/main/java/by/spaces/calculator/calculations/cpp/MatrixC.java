@@ -1,10 +1,12 @@
 package by.spaces.calculator.calculations.cpp;
 
-import java.io.*;
+import by.spaces.calculator.calculations.Matrix;
+
+import java.io.IOException;
 
 import static by.spaces.calculator.calculations.ExtractLibClass.extractLibrary;
 
-public class MatrixC{
+public class MatrixC implements Matrix {
     static {
         try {
             System.load(extractLibrary("Matrix"));
@@ -20,9 +22,30 @@ public class MatrixC{
     private native void init(String inputString);
     private native void init(double[][] matrixData);
 
+    @Override
+    public Matrix addMatrix(Matrix other) {
+        return this.add((MatrixC) other);
+    }
+
+    @Override
+    public Matrix subtractMatrix(Matrix other) {
+        return this.subtract((MatrixC) other);
+    }
+
+    @Override
+    public Matrix multiplyMatrix(double scalar) {
+        return this.multiply(scalar);
+    }
+
+    @Override
+    public Matrix multiplyMatrix(Matrix other) {
+        return this.multiply((MatrixC) other);
+    }
+
     public native int getRows();
     public native int getCols();
     public native double[][] getData();
+
     public native MatrixC add(MatrixC other);
     public native MatrixC subtract(MatrixC other);
     public native MatrixC multiply(double scalar);
