@@ -48,6 +48,12 @@ public class CalculationController {
 
     private final CalculationService service = new CalculationService();
 
+    private String getLibName(String lib){
+        if (lib == null || lib.isEmpty())
+            return "cpp";
+        return lib;
+    }
+
     @Operation(summary = "Number conversion", description = "This method Convert numbers to binary, decimal, octal and hexadecimal number systems.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Convert number successfully",
@@ -60,11 +66,14 @@ public class CalculationController {
         try{
             int sourceBase = Integer.parseInt(convertRequest.getSourceBase());
             String number = convertRequest.getNumber();
-            String bin = service.convertNumber(number, sourceBase, 2);
-            String dec = service.convertNumber(number, sourceBase, 10);
-            String oct = service.convertNumber(number, sourceBase, 8);
-            String hex = service.convertNumber(number, sourceBase, 16);
-            logInfo(CalculationController.class, "Get convert result: bin - " + bin
+            String lib = convertRequest.getLib();
+            String bin = service.convertNumber(number, sourceBase, 2, lib);
+            String dec = service.convertNumber(number, sourceBase, 10, lib);
+            String oct = service.convertNumber(number, sourceBase, 8, lib);
+            String hex = service.convertNumber(number, sourceBase, 16, lib);
+
+            logInfo(CalculationController.class, "(" + getLibName(lib) + ") Get convert result:"
+                    + " bin - " + bin
                     + ", dec - " + dec
                     + ", oct - " + oct
                     + ", hex - " + hex);
@@ -90,11 +99,13 @@ public class CalculationController {
     })
     @PostMapping("/matrix/determinant")
     public ResponseEntity<String> getMatrixDeterminant(@Valid @RequestBody
-                                                           @Schema(example = "[[1,2],[3,4]]")
-                                                           Object requestData) {
+                                                           MatrixRequest requestData) {
         try{
-            String determinant = String.valueOf(service.getDeterminant(requestData));
-            logInfo(CalculationController.class, "Get determinant result: " + determinant);
+            String determinant = String.valueOf(service.getDeterminant(
+                    requestData.getMatrixData(),
+                    requestData.getLib()));
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get determinant result: " + determinant);
             return ResponseEntity.ok(determinant);
         } catch (Exception e){
             String error = "Determinant calculation failed: " + e.getMessage();
@@ -112,11 +123,13 @@ public class CalculationController {
     })
     @PostMapping("/matrix/inverse")
     public ResponseEntity<Object> inverseMatrix(@Valid @RequestBody
-                                                            @Schema(example = "[[1,2],[3,4]]")
-                                                            Object requestData) {
+                                                    MatrixRequest requestData) {
         try{
-            double[][] matrix = service.getInverseMatrix(requestData);
-            logInfo(CalculationController.class, "Get inverse result: " + arrayToString(matrix));
+            double[][] matrix = service.getInverseMatrix(
+                    requestData.getMatrixData(),
+                    requestData.getLib());
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get inverse result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Inverse matrix calculation failed: ", e);
@@ -132,11 +145,13 @@ public class CalculationController {
     })
     @PostMapping("/matrix/transpose")
     public ResponseEntity<Object> transposeMatrix(@Valid @RequestBody
-                                                              @Schema(example = "[[1,2],[3,4]]")
-                                                              Object requestData) {
+                                                      MatrixRequest requestData) {
         try{
-            double[][] matrix = service.getTransposeMatrix(requestData);
-            logInfo(CalculationController.class, "Get transpose result: " + arrayToString(matrix));
+            double[][] matrix = service.getTransposeMatrix(
+                    requestData.getMatrixData(),
+                    requestData.getLib());
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get transpose result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Transpose matrix calculation failed: ", e);
@@ -153,8 +168,12 @@ public class CalculationController {
     @PostMapping("/matrix/multiply_by_scalar")
     public ResponseEntity<Object> multiplyMatrixByScalar(@Valid @RequestBody MatrixWithScalarReq requestData) {
         try{
-            double[][] matrix = service.matrixMultiplyByScalar(requestData.getMatrixData(), requestData.getScalar());
-            logInfo(CalculationController.class, "Get scalar multiply result: " + arrayToString(matrix));
+            double[][] matrix = service.matrixMultiplyByScalar(
+                    requestData.getMatrixData(),
+                    requestData.getScalar(),
+                    requestData.getLib());
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get scalar multiply result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix multiplication by scalar failed: ", e);
@@ -171,8 +190,12 @@ public class CalculationController {
     @PostMapping("/matrix/add")
     public ResponseEntity<Object> addMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
-            double[][] matrix = service.matrixAddition(requestData.getMatrixData(), requestData.getMatrixData2());
-            logInfo(CalculationController.class, "Get matrix addition result: " + arrayToString(matrix));
+            double[][] matrix = service.matrixAddition(
+                    requestData.getMatrixData(),
+                    requestData.getMatrixData2(),
+                    requestData.getLib());
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get matrix addition result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix addition failed: ", e);
@@ -189,8 +212,12 @@ public class CalculationController {
     @PostMapping("/matrix/subtract")
     public ResponseEntity<Object> subtractMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
-            double[][] matrix = service.matrixSubtraction(requestData.getMatrixData(), requestData.getMatrixData2());
-            logInfo(CalculationController.class, "Get matrix subtraction result: " + arrayToString(matrix));
+            double[][] matrix = service.matrixSubtraction(
+                    requestData.getMatrixData(),
+                    requestData.getMatrixData2(),
+                    requestData.getLib());
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get matrix subtraction result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix subtraction failed: ", e);
@@ -207,8 +234,12 @@ public class CalculationController {
     @PostMapping("/matrix/multiply")
     public ResponseEntity<Object> multiplyMatrix(@Valid @RequestBody MatricesRequest requestData) {
         try{
-            double[][] matrix = service.matrixMultiplication(requestData.getMatrixData(), requestData.getMatrixData2());
-            logInfo(CalculationController.class, "Get matrix multiplication result: " + arrayToString(matrix));
+            double[][] matrix = service.matrixMultiplication(
+                    requestData.getMatrixData(),
+                    requestData.getMatrixData2(),
+                    requestData.getLib());
+            String lib = getLibName(requestData.getLib());
+            logInfo(CalculationController.class, "(" + lib + ") Get matrix multiplication result: " + arrayToString(matrix));
             return ResponseEntity.ok(new MatrixResponse(matrix));
         } catch (Exception e){
             return handleException("Matrix multiplication failed: ", e);

@@ -1,8 +1,12 @@
 package by.spaces.calculator.service;
 
-import by.spaces.calculator.calculations.cpp.ConverterC;
-import by.spaces.calculator.calculations.cpp.MatrixC;
+import by.spaces.calculator.calculations.Converter;
+import by.spaces.calculator.calculations.Matrix;
 import by.spaces.calculator.calculations.PrimeNumbersCount;
+import by.spaces.calculator.calculations.interfaces.ConverterBase;
+import by.spaces.calculator.calculations.interfaces.MatrixBase;
+import by.spaces.calculator.calculations.java.ConverterJ;
+import by.spaces.calculator.calculations.java.MatrixJ;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,9 +15,14 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class CalculationService {
-    private final ConverterC converter = new ConverterC();
+    private ConverterBase getConverter(String lib){
+        if (lib == null || lib.isEmpty() || lib.equalsIgnoreCase("cpp"))
+            return new Converter();
+        else
+            return new ConverterJ();
+    }
 
-    public String convertNumber(String number, int sourceBase, int targetBase) {
+    public String convertNumber(String number, int sourceBase, int targetBase, String lib) {
         if (sourceBase != 2 && sourceBase != 8 && sourceBase != 10 && sourceBase != 16)
             throw new IllegalArgumentException("Wrong sourceBase");
         try {
@@ -23,7 +32,7 @@ public class CalculationService {
         } catch (Exception e) {
             throw new IllegalArgumentException("The number must be non-negative");
         }
-        return converter.convertBase(number, sourceBase, targetBase);
+        return getConverter(lib).convertBase(number, sourceBase, targetBase);
     }
 
     private boolean validateMatrixData(String inputString) {
@@ -49,14 +58,28 @@ public class CalculationService {
         }
     }
 
-    private MatrixC createMatrix(Object matrixData) {
-        MatrixC matrix;
+    private MatrixBase getMatrix(String lib, String data){
+        if (lib == null || lib.isEmpty() || lib.equalsIgnoreCase("cpp"))
+            return new Matrix(data);
+        else
+            return new MatrixJ(data);
+    }
+
+    private MatrixBase getMatrix(String lib, double[][] data){
+        if (lib == null || lib.isEmpty() || lib.equalsIgnoreCase("cpp"))
+            return new Matrix(data);
+        else
+            return new MatrixJ(data);
+    }
+
+    private MatrixBase createMatrix(Object matrixData, String lib) {
+        MatrixBase matrix;
         if (matrixData instanceof String data) {
             if (!validateMatrixData(data))
                 throw new IllegalArgumentException("Wrong matrix string");
-            matrix = new MatrixC(data);
+            matrix = getMatrix(lib, data);
         } else if (matrixData instanceof double[][] data) {
-            matrix = new MatrixC(data);
+            matrix = getMatrix(lib, data);
         } else if (matrixData instanceof ArrayList<?> data) {
             if (!data.isEmpty() && data.get(0) instanceof ArrayList<?> && !((ArrayList<?>) data.get(0)).isEmpty()) {
                 double[][] array;
@@ -70,7 +93,7 @@ public class CalculationService {
                             .toArray(double[][]::new);
                 else
                     throw new IllegalArgumentException("Wrong matrix array");
-                matrix = new MatrixC(array);
+                matrix = getMatrix(lib, array);
             } else
                 throw new IllegalArgumentException("Wrong matrix array");
         } else {
@@ -79,32 +102,32 @@ public class CalculationService {
         return matrix;
     }
 
-    public double getDeterminant(Object matrixData) {
-        return createMatrix(matrixData).findDeterminant();
+    public double getDeterminant(Object matrixData, String lib) {
+        return createMatrix(matrixData, lib).findDeterminant();
     }
 
-    public double[][] getInverseMatrix(Object matrixData) {
-        return createMatrix(matrixData).inverseMatrix().getData();
+    public double[][] getInverseMatrix(Object matrixData, String lib) {
+        return createMatrix(matrixData, lib).inverseMatrix().getData();
     }
 
-    public double[][] getTransposeMatrix(Object matrixData) {
-        return createMatrix(matrixData).transpose().getData();
+    public double[][] getTransposeMatrix(Object matrixData, String lib) {
+        return createMatrix(matrixData, lib).transpose().getData();
     }
 
-    public double[][] matrixMultiplyByScalar(Object matrixData, String scalar) {
-        return createMatrix(matrixData).multiply(Double.parseDouble(scalar)).getData();
+    public double[][] matrixMultiplyByScalar(Object matrixData, String scalar, String lib) {
+        return createMatrix(matrixData, lib).multiplyMatrix(Double.parseDouble(scalar)).getData();
     }
 
-    public double[][] matrixAddition(Object matrixData, Object matrixData2) {
-        return createMatrix(matrixData).add(createMatrix(matrixData2)).getData();
+    public double[][] matrixAddition(Object matrixData, Object matrixData2, String lib) {
+        return createMatrix(matrixData, lib).addMatrix(createMatrix(matrixData2, lib)).getData();
     }
 
-    public double[][] matrixSubtraction(Object matrixData, Object matrixData2) {
-        return createMatrix(matrixData).subtract(createMatrix(matrixData2)).getData();
+    public double[][] matrixSubtraction(Object matrixData, Object matrixData2, String lib) {
+        return createMatrix(matrixData, lib).subtractMatrix(createMatrix(matrixData2, lib)).getData();
     }
 
-    public double[][] matrixMultiplication(Object matrixData, Object matrixData2) {
-        return createMatrix(matrixData).multiply(createMatrix(matrixData2)).getData();
+    public double[][] matrixMultiplication(Object matrixData, Object matrixData2, String lib) {
+        return createMatrix(matrixData, lib).multiplyMatrix(createMatrix(matrixData2, lib)).getData();
     }
 
     private void checkRange(Integer start, Integer max) {

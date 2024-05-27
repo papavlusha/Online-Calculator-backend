@@ -14,4 +14,7 @@ public class MatricesRequest {
     @Schema(description = "Second matrix data", example = "[[1, 2], [3, 4]]")
     @NotNull
     private Object matrixData2;
+
+    @Schema(description = "Library to use", example = "Cpp")
+    private String lib;
 }

@@ -15,4 +15,7 @@ public class MatrixWithScalarReq {
     @Schema(description = "Scalar", example = "5")
     @NotBlank
     private String scalar;
+
+    @Schema(description = "Library to use", example = "Cpp")
+    private String lib;
 }

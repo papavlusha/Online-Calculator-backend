@@ -13,4 +13,6 @@ public class ConvertRequest {
     @Schema(description = "Number to convert", example = "25")
     @NotBlank
     private String number;
+    @Schema(description = "Library to use", example = "Cpp")
+    private String lib;
 }
