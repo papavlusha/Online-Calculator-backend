@@ -1,20 +1,17 @@
 package by.spaces.calculator.service;
 
-import by.spaces.calculator.calculations.Converter;
-import by.spaces.calculator.calculations.Matrix;
+import by.spaces.calculator.calculations.cpp.ConverterC;
+import by.spaces.calculator.calculations.cpp.MatrixC;
 import by.spaces.calculator.calculations.PrimeNumbersCount;
-import by.spaces.calculator.controller.CalculationController;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-import static by.spaces.calculator.logging.AppLogger.logError;
-
 @Service
 public class CalculationService {
-    private final Converter converter = new Converter();
+    private final ConverterC converter = new ConverterC();
 
     public String convertNumber(String number, int sourceBase, int targetBase) {
         if (sourceBase != 2 && sourceBase != 8 && sourceBase != 10 && sourceBase != 16)
@@ -52,14 +49,14 @@ public class CalculationService {
         }
     }
 
-    private Matrix createMatrix(Object matrixData) {
-        Matrix matrix;
+    private MatrixC createMatrix(Object matrixData) {
+        MatrixC matrix;
         if (matrixData instanceof String data) {
             if (!validateMatrixData(data))
                 throw new IllegalArgumentException("Wrong matrix string");
-            matrix = new Matrix(data);
+            matrix = new MatrixC(data);
         } else if (matrixData instanceof double[][] data) {
-            matrix = new Matrix(data);
+            matrix = new MatrixC(data);
         } else if (matrixData instanceof ArrayList<?> data) {
             if (!data.isEmpty() && data.get(0) instanceof ArrayList<?> && !((ArrayList<?>) data.get(0)).isEmpty()) {
                 double[][] array;
@@ -73,7 +70,7 @@ public class CalculationService {
                             .toArray(double[][]::new);
                 else
                     throw new IllegalArgumentException("Wrong matrix array");
-                matrix = new Matrix(array);
+                matrix = new MatrixC(array);
             } else
                 throw new IllegalArgumentException("Wrong matrix array");
         } else {
