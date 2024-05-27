@@ -1,7 +1,5 @@
 package by.spaces.calculator.calculations.java;
 
-import by.spaces.calculator.calculations.Converter;
-
 public class ConverterJ {
 
     public boolean validateNumber(String number, int base) {
