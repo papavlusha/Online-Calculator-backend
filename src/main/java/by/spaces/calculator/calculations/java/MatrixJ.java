@@ -1,12 +1,12 @@
 package by.spaces.calculator.calculations.java;
 
-import by.spaces.calculator.calculations.Matrix;
+import by.spaces.calculator.calculations.interfaces.MatrixBase;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class MatrixJ implements Matrix {
+public class MatrixJ implements MatrixBase {
     public int rows;
     public int cols;
     public List<List<Double>> data;
@@ -56,22 +56,22 @@ public class MatrixJ implements Matrix {
     }
 
     @Override
-    public Matrix addMatrix(Matrix other) {
+    public MatrixBase addMatrix(MatrixBase other) {
         return this.add((MatrixJ) other);
     }
 
     @Override
-    public Matrix subtractMatrix(Matrix other) {
+    public MatrixBase subtractMatrix(MatrixBase other) {
         return this.subtract((MatrixJ) other);
     }
 
     @Override
-    public Matrix multiplyMatrix(double scalar) {
+    public MatrixBase multiplyMatrix(double scalar) {
         return this.multiply(scalar);
     }
 
     @Override
-    public Matrix multiplyMatrix(Matrix other) {
+    public MatrixBase multiplyMatrix(MatrixBase other) {
         return this.multiply((MatrixJ) other);
     }
 
