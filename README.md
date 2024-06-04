@@ -1,45 +1,41 @@
-# Отчет об используемых технологиях в проекте
+# Online-Calculator-backend
 
-## 1. Введение
-Здесь представлена информация о технологиях, используемых в проекте, выполненном в период с 5 февраля по 24 марта 2024 года.
+## Overview
 
-## 2. Среды разработки и языки программирования
-- Среда разработки серверной части: Intellij Idea Ultimate
-- Среда разработки клиентской части: Intellij Idea Ultimate
-- Язык программирования серверной части: Java (Spring Boot)
-- Язык программирования клиентской части: TypeScript (Angular)
+This is the backend part of the Online calculator application.
 
-## 3. Схема базы данных
-![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95144497/c8e1e354-ca14-4198-9a58-0dac03449b0f)
+Features:
 
+* User Registration/Authorization
 
-## 4. Архитектура серверной части
-### Диаграмма пакетов
-![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95144497/2389d1b9-70ed-47cc-aa0a-f40242c892d5)
+* Select a library for calculations
 
+* Computation of prime numbers on the interval (parallel implementation)
 
-### Диаграмма классов
-![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95144497/b3af411e-789e-413b-ad46-26f24ec1ce0f)
+* Conversion of numbers into different number systems
 
+* Working with matrices
 
-## 5. Архитектура клиентской части
-### Структура проекта
-- Логин: компонент позволяющий пользователю войти под своим аккаунтом путем ввода почты и пароля
-- ![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95187375/c4d036d8-cd70-4ebc-8082-07a3279ca963)
-- Регистрация: компонент позволяющий пользователю зарегистрировать  свой аккаунт путем ввода данных
-- ![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95187375/084b3e57-4a9e-4ffe-bd1d-bc9c20accbbc)
-- Главная: страница интерфейс отправляющая на остальные страницы
-- ![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95187375/148eebf6-8d38-4a78-9ccf-4f073ed035d8)
+* Using public and private chat rooms
 
-- Мэйн:
-  - Компонент матрица: содержит в себе решение различных операций с матрицами
-    ![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95187375/f6fd712f-4b24-4850-bccd-33409298dd9a)
+A more detailed description of endpoints, as well as testing of their operation can be studied using Swagger UI.
 
-  - Компонент конвертер: содержит в себе операции перевода чисел в разные системы счисления
-    ![image](https://github.com/papavlusha/Online-Calculator-backend/assets/95187375/e728deb2-69d7-4b38-8d1e-d88737e7ef9b)
+Basic documentation can be found in the [docs](docs/).
 
+## Using Swagger UI
 
-## 6. Заключение
-В ходе выполнения проекта были использованы современные технологии разработки как на стороне сервера, так и на стороне клиента. Взаимодействие между компонентами проекта обеспечивает эффективную работу системы.
+Swagger UI provides a visual interface for interacting with application's API. It automatically generates documentation based on application code and allows to view and test all available API endpoints.
 
+### Access UI
 
+After launching application, you can access the Swagger UI by going to the following URL: http://localhost:8082/OnlineCalculator/swagger-ui.html
+
+### Using UI
+
+On the Swagger UI page, you will see a list of all available API endpoints. Available to click on any of them to see detailed information including endpoint description, request parameters, sample responses, and more.
+
+To test an API endpoint, click on the "Try it out" button, enter the required parameters, then click "Execute". You will see the results of the request, including the response code, response time, and response body.
+
+### Update documentation
+
+Swagger documentation is automatically updated when your application code changes. If you add a new API endpoint or modify an existing one, these changes will be reflected in the Swagger UI the next time you run your application.
